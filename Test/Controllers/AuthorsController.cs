@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Test.Models.DTO;
 using Test.Models.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Test.Controllers
 {
@@ -18,9 +19,13 @@ namespace Test.Controllers
     {
         private readonly IDataRepository<Author, AuthorDTO> _dataRepository;
 
-        public AuthorsController(IDataRepository<Author, AuthorDTO> dataRepository)
+        private readonly ILogger<AuthorsController> _logger;
+
+        public AuthorsController(IDataRepository<Author, AuthorDTO> dataRepository, ILogger<AuthorsController> logger)
         {
             _dataRepository = dataRepository;
+            _logger = logger;
+            
         }
 
         // GET: api/Authors
@@ -28,6 +33,9 @@ namespace Test.Controllers
         public IActionResult Get()
         {
             var authors = _dataRepository.GetAll();
+
+            _logger.LogInformation("GET All Request for Authors");
+
             return Ok(authors);
         }
 
@@ -38,8 +46,11 @@ namespace Test.Controllers
             var author = _dataRepository.GetDto(id);
             if (author == null)
             {
+                _logger.LogError("NULL return of GET Request for Author: ", id);
                 return NotFound("Author not found.");
             }
+
+            _logger.LogInformation("GET Request for Author: ", id);
 
             return Ok(author);
         }

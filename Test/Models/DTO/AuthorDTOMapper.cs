@@ -10,6 +10,12 @@ namespace Test.Models.DTO
     {
         public static AuthorDTO MapToDto(Author author)
         {
+
+            if (author == null)
+            {
+                return new AuthorDTO();
+            }
+
             return new AuthorDTO()
             {
                 Id = author.Id,
